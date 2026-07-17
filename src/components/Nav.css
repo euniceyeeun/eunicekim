@@ -3,22 +3,27 @@
     height:91px;
     position:relative;
     top:0;
-    font-family:'Arial Narrow', Helvetica, sans-serif;
-    font-size:18px;
+    z-index:4;
+    font-size:12px;
     color:#FFFFFF;
     pointer-events:auto;
 }
 
 .nav-layer {
-    width:100%;
-    display:flex;
-    flex-flow:row nowrap;
-    justify-content:space-between;
-    padding:30px;
+    width:calc(50dvw - 30px);
+    height:91px;
+    margin-left:30px;
+    position:relative;
+    display:grid;
+    grid-template-columns:auto minmax(0, 1fr);
+    align-items:start;
+    padding-top:30px;
 }
 
 .nav-layer-base {
     color:#FFFFFF;
+    position:relative;
+    z-index:1;
 }
 
 .nav-bar.is-index-mask-visible .nav-layer-base {
@@ -27,41 +32,54 @@
 
 .nav-layer-mask {
     position:fixed;
-    top:50%;
-    left:50%;
-    width:30vmax;
-    height:30vmax;
+    inset:0;
+    width:100dvw;
+    height:100dvh;
+    z-index:2;
     padding:0;
     overflow:hidden;
     color:#FFFFFF;
     pointer-events:none;
-    transform:translate(-50%, -50%);
-    -webkit-mask-image:radial-gradient(circle at 50% 50%, #FFFFFF 0 64%, rgba(255, 255, 255, 0.72) 60%, rgba(255, 255, 255, 0.25) 65%, transparent 66%);
-  mask-image:radial-gradient(circle at 50% 50%, #FFFFFF 0 64%, rgba(255, 255, 255, 0.72) 60%, rgba(255, 255, 255, 0.25) 65%, transparent 66%);
+    --index-mask-radius:0px;
+    clip-path:circle(var(--index-mask-radius) at 50% 50%);
 }
 
 .nav-layer-mask.is-index-mask-opening {
-    animation:shrink-index-mask 2s ease-out forwards;
+    animation:shrink-nav-mask 2s ease-out forwards;
 }
 
 .nav-layer-mask.is-index-mask-closing {
-    animation:expand-index-mask 2s ease-out forwards;
+    animation:expand-nav-mask 2s ease-out forwards;
 }
 
 .nav-layer-mask-content {
     position:absolute;
-    top:calc(-50dvh + 50%);
-    left:calc(-50dvw + 50%);
-    width:100dvw;
+    top:0;
+    left:30px;
+    width:calc(50dvw - 30px);
     height:91px;
-    display:flex;
-    flex-flow:row nowrap;
-    justify-content:space-between;
-    padding:30px;
+    display:grid;
+    grid-template-columns:auto minmax(0, 1fr);
+    align-items:start;
+    padding-top:30px;
 }
 
-.nav-bar a {
-    color:inherit;
+.nav-layer > *:nth-child(1),
+.nav-layer-mask-content > *:nth-child(1) {
+    grid-column:1;
+}
+
+.nav-layer > *:nth-child(2),
+.nav-layer-mask-content > *:nth-child(2) {
+    grid-column:2;
+    justify-self:center;
+}
+
+.nav-layer > *:nth-child(3),
+.nav-layer-mask-content > *:nth-child(3) {
+    position:fixed;
+    top:30px;
+    left:50dvw;
 }
 
 .nav-button {
@@ -78,8 +96,92 @@
     cursor:default;
 }
 
-.nav-item-middle {
+.nav-index-group {
+    position:relative;
+    width:max-content;
+}
+
+.project-index-list {
     position:absolute;
-    left:50%;
-    transform: translateX(-50%);
+    top:50px;
+    left:0;
+    display:flex;
+    flex-flow:column nowrap;
+    gap:2px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:project-index;
+    font-size:12px;
+    line-height:130%;
+    color:#000000;
+    opacity:0;
+    pointer-events:none;
+    white-space:nowrap;
+    transition:opacity 0.35s ease;
+}
+
+.nav-layer-mask .project-index-list {
+    display:none;
+}
+
+.nav-bar.is-index-mask-visible .nav-layer-base .project-index-list {
+    color:#000000;
+}
+
+.nav-bar.is-index-mask-open .nav-layer-base .project-index-list {
+    opacity:1;
+    pointer-events:auto;
+}
+
+.project-index-list .is-active {
+    font-weight:700;
+}
+
+.project-index-list li {
+    display:grid;
+    grid-template-columns:auto auto;
+    column-gap:8px;
+    counter-increment:project-index;
+    justify-content:start;
+}
+
+.project-index-list li::before {
+    content:counter(project-index) ".";
+}
+
+.project-index-list button {
+    appearance:none;
+    border:0;
+    background:transparent;
+    padding:0;
+    font:inherit;
+    color:inherit;
+    cursor:pointer;
+    transition:color 0.2s ease;
+}
+
+.project-index-list li:not(.is-active) button:hover,
+.project-index-list li:not(.is-active) button:focus-visible {
+    color:#8A8A8A;
+}
+
+@keyframes shrink-nav-mask {
+    from {
+        --index-mask-radius:75vmax;
+    }
+
+    to {
+        --index-mask-radius:0px;
+    }
+}
+
+@keyframes expand-nav-mask {
+    from {
+        --index-mask-radius:0px;
+    }
+
+    to {
+        --index-mask-radius:75vmax;
+    }
 }

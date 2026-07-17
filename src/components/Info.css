@@ -1,10 +1,8 @@
 #info-container {
     width:100dvw;
-    display:flex;
-    flex-flow:row nowrap;
-    justify-content:flex-end;
-    padding-right:30px;
-    position:relative;
+    position:fixed;
+    top:80px;
+    left:0;
     opacity:0;
     transition:opacity 0.2s ease;
     pointer-events:none;
@@ -15,12 +13,13 @@
 }
 
 .info-content {
-    width:40%;
+    width:calc(50dvw - 30px);
+    margin-left:50dvw;
     display:block;
-    font-family:'Arial Narrow', Helvetica, sans-serif;
-    font-size:18px;
+    font-size:12px;
+    line-height:130%;
     color:#FFFFFF;
-    text-align:right;
+    text-align:left;
     transition:color 0.3s ease;
 }
 
@@ -44,6 +43,10 @@
     opacity:0;
     animation:reveal-character 0.01s linear forwards;
     animation-delay:var(--character-delay);
+}
+
+.info-content.is-animation-paused .info-character {
+    animation-play-state:paused;
 }
 
 @keyframes reveal-character {

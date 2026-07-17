@@ -1,70 +1,197 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Nav from "../components/Nav";
 import VideoBg from "../components/VideoBg"
 import Info from "../components/Info"
-import { projects } from "../data/projects";
+import ProjectContent from "../components/ProjectContent";
+import { homeBackgroundVideoSrc, projects } from "../data/projects";
 import "./Home.css";
 
 type IndexMaskState = "idle" | "opening" | "open" | "closing";
+const INFO_FADE_DURATION_MS = 200;
+const PROJECT_FADE_DURATION_MS = 200;
 
 function Home() {
+    const navigate = useNavigate();
+    const { projectSlug } = useParams();
+    const routeProjectIndex = projectSlug ? projects.findIndex((project) => project.slug === projectSlug) : -1;
+    const selectedProjectIndex = routeProjectIndex === -1 ? null : routeProjectIndex;
+    const selectedProject = selectedProjectIndex === null ? null : projects[selectedProjectIndex];
     const [isInfoVisible, setIsInfoVisible] = useState(false);
     const [hasOpenedInfo, setHasOpenedInfo] = useState(false);
     const [shouldAnimateInfo, setShouldAnimateInfo] = useState(false);
+    const [shouldPauseInfoAnimation, setShouldPauseInfoAnimation] = useState(false);
     const [isInfoRevealInProgress, setIsInfoRevealInProgress] = useState(false);
+    const [isInfoTransitionPending, setIsInfoTransitionPending] = useState(false);
     const [indexMaskKey, setIndexMaskKey] = useState(0);
-    const [indexMaskState, setIndexMaskState] = useState<IndexMaskState>("idle");
-    const [selectedProjectIndex, setSelectedProjectIndex] = useState(0);
+    const [indexMaskState, setIndexMaskState] = useState<IndexMaskState>(selectedProject ? "open" : "idle");
+    const [isIndexTransitionPending, setIsIndexTransitionPending] = useState(false);
+    const [isProjectTransitionPending, setIsProjectTransitionPending] = useState(false);
+    const [isProjectContentVisible, setIsProjectContentVisible] = useState(Boolean(selectedProject));
+    const indexTransitionTimeoutRef = useRef<number | null>(null);
 
-    const toggleInfo = () => {
-        if (isInfoRevealInProgress) {
-            return;
+    useEffect(() => {
+        return () => {
+            if (indexTransitionTimeoutRef.current !== null) {
+                window.clearTimeout(indexTransitionTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (projectSlug && routeProjectIndex === -1) {
+            navigate("/", { replace: true });
+        }
+    }, [navigate, projectSlug, routeProjectIndex]);
+
+    const fadeOutInfo = (onFadeEnd?: () => void) => {
+        const shouldPreservePartialReveal = isInfoRevealInProgress && shouldAnimateInfo;
+
+        setIsInfoVisible(false);
+        setIsInfoRevealInProgress(false);
+
+        if (shouldPreservePartialReveal) {
+            setShouldPauseInfoAnimation(true);
+        } else {
+            setShouldAnimateInfo(false);
         }
 
-        if (!hasOpenedInfo) {
-            setIsInfoVisible(true);
-            setHasOpenedInfo(true);
-            setShouldAnimateInfo(true);
-            setIsInfoRevealInProgress(true);
-            return;
-        }
-
-        setIsInfoVisible((currentVisibility) => !currentVisibility);
-        setShouldAnimateInfo(false);
+        indexTransitionTimeoutRef.current = window.setTimeout(() => {
+            setShouldAnimateInfo(false);
+            setShouldPauseInfoAnimation(false);
+            onFadeEnd?.();
+            indexTransitionTimeoutRef.current = null;
+        }, INFO_FADE_DURATION_MS);
     };
 
-    const toggleIndex = () => {
-        if (indexMaskState === "idle" || indexMaskState === "closing") {
-            setIndexMaskKey((currentKey) => currentKey + 1);
-            setIndexMaskState("opening");
+    const toggleInfo = () => {
+        if (isInfoRevealInProgress || isInfoTransitionPending) {
             return;
         }
 
+        const showInfo = () => {
+            setIsInfoVisible(true);
+            setShouldAnimateInfo(!hasOpenedInfo);
+            setShouldPauseInfoAnimation(false);
+
+            if (!hasOpenedInfo) {
+                setHasOpenedInfo(true);
+                setIsInfoRevealInProgress(true);
+            }
+        };
+
+        if (!isInfoVisible && isProjectContentVisible) {
+            setIsProjectContentVisible(false);
+            setIsInfoTransitionPending(true);
+            indexTransitionTimeoutRef.current = window.setTimeout(() => {
+                showInfo();
+                setIsInfoTransitionPending(false);
+                indexTransitionTimeoutRef.current = null;
+            }, INFO_FADE_DURATION_MS);
+            return;
+        }
+
+        if (!isInfoVisible) {
+            showInfo();
+            return;
+        }
+
+        fadeOutInfo();
+    };
+
+    const startIndexOpening = () => {
+        if (selectedProjectIndex === null) {
+            navigate(`/${projects[0].slug}`);
+            setIsProjectContentVisible(true);
+        }
+
+        setIndexMaskKey((currentKey) => currentKey + 1);
+        setIndexMaskState("opening");
+    };
+
+    const startIndexClosing = () => {
+        setIsProjectContentVisible(false);
+        navigate("/");
         setIndexMaskKey((currentKey) => currentKey + 1);
         setIndexMaskState("closing");
     };
 
-    const showPreviousProject = () => {
-        setSelectedProjectIndex((currentIndex) => (currentIndex - 1 + projects.length) % projects.length);
+    const fadeOutInfoBeforeIndexTransition = (startTransition: () => void) => {
+        setIsIndexTransitionPending(true);
+        fadeOutInfo(() => {
+            startTransition();
+            setIsIndexTransitionPending(false);
+        });
     };
 
-    const showNextProject = () => {
-        setSelectedProjectIndex((currentIndex) => (currentIndex + 1) % projects.length);
+    const toggleIndex = () => {
+        if (isIndexTransitionPending) {
+            return;
+        }
+
+        if (indexMaskState === "idle" || indexMaskState === "closing") {
+            if (isInfoVisible) {
+                fadeOutInfoBeforeIndexTransition(startIndexOpening);
+                return;
+            }
+
+            startIndexOpening();
+            return;
+        }
+
+        if (isInfoVisible) {
+            fadeOutInfoBeforeIndexTransition(startIndexClosing);
+            return;
+        }
+
+        startIndexClosing();
     };
 
-    const selectedProject = projects[selectedProjectIndex];
+    const showProjectContent = (projectIndex: number) => {
+        navigate(`/${projects[projectIndex].slug}`);
+        setIsProjectContentVisible(false);
+
+        window.requestAnimationFrame(() => {
+            setIsProjectContentVisible(true);
+        });
+    };
+
+    const selectProject = (projectIndex: number) => {
+        if (isProjectTransitionPending) {
+            return;
+        }
+
+        if (isInfoVisible) {
+            setIsProjectContentVisible(false);
+            fadeOutInfo(() => showProjectContent(projectIndex));
+            return;
+        }
+
+        if (projectIndex === selectedProjectIndex) {
+            return;
+        }
+
+        if (isProjectContentVisible) {
+            setIsProjectTransitionPending(true);
+            setIsProjectContentVisible(false);
+            indexTransitionTimeoutRef.current = window.setTimeout(() => {
+                showProjectContent(projectIndex);
+                setIsProjectTransitionPending(false);
+                indexTransitionTimeoutRef.current = null;
+            }, PROJECT_FADE_DURATION_MS);
+            return;
+        }
+
+        showProjectContent(projectIndex);
+    };
 
     return (
         <>
-    <VideoBg
-        indexMaskKey={indexMaskKey}
+        <VideoBg
         indexMaskState={indexMaskState}
-        projects={projects}
+        backgroundVideoSrc={homeBackgroundVideoSrc}
         selectedProject={selectedProject}
-        selectedProjectIndex={selectedProjectIndex}
-        onPreviousProject={showPreviousProject}
-        onNextProject={showNextProject}
-        onIndexClick={toggleIndex}
+        isIndexContentVisible={isProjectContentVisible}
         onIndexMaskAnimationEnd={() => {
             setIndexMaskState((currentState) => currentState === "opening" ? "open" : "idle");
         }}
@@ -74,19 +201,25 @@ function Home() {
             isIndexMaskVisible={indexMaskState !== "idle"}
             indexMaskState={indexMaskState}
             indexMaskKey={indexMaskKey}
+            projects={projects}
+            selectedProjectIndex={selectedProjectIndex}
+            onSelectProject={selectProject}
             onIndexClick={toggleIndex}
-            isInfoDisabled={isInfoRevealInProgress}
+            isInfoDisabled={isInfoRevealInProgress || isInfoTransitionPending}
             onInfoClick={toggleInfo}
         />
         <Info
             isIndexMaskVisible={indexMaskState === "opening" || indexMaskState === "open"}
             isVisible={isInfoVisible}
             shouldAnimate={shouldAnimateInfo}
+            shouldPauseAnimation={shouldPauseInfoAnimation}
             onInitialRevealEnd={() => {
                 setIsInfoRevealInProgress(false);
                 setShouldAnimateInfo(false);
+                setShouldPauseInfoAnimation(false);
             }}
         />
+        <ProjectContent project={selectedProject} isVisible={isProjectContentVisible && indexMaskState === "open"} />
     </div>
     </>
     )
