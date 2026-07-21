@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Nav from "../components/Nav";
 import VideoBg from "../components/VideoBg"
 import Info from "../components/Info"
@@ -13,13 +13,16 @@ const PROJECT_FADE_DURATION_MS = 200;
 
 function Home() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { projectSlug } = useParams();
+    const isInfoRoute = location.pathname === "/info";
     const routeProjectIndex = projectSlug ? projects.findIndex((project) => project.slug === projectSlug) : -1;
     const selectedProjectIndex = routeProjectIndex === -1 ? null : routeProjectIndex;
     const selectedProject = selectedProjectIndex === null ? null : projects[selectedProjectIndex];
     const [pendingProjectIndex, setPendingProjectIndex] = useState<number | null>(null);
-    const [isInfoVisible, setIsInfoVisible] = useState(false);
-    const [hasOpenedInfo, setHasOpenedInfo] = useState(false);
+    const [lastProjectIndex, setLastProjectIndex] = useState<number | null>(selectedProjectIndex);
+    const [isInfoVisible, setIsInfoVisible] = useState(isInfoRoute);
+    const [hasOpenedInfo, setHasOpenedInfo] = useState(isInfoRoute);
     const [shouldAnimateInfo, setShouldAnimateInfo] = useState(false);
     const [shouldPauseInfoAnimation, setShouldPauseInfoAnimation] = useState(false);
     const [isInfoRevealInProgress, setIsInfoRevealInProgress] = useState(false);
@@ -71,6 +74,11 @@ function Home() {
         }
 
         const showInfo = () => {
+            if (selectedProjectIndex !== null) {
+                setLastProjectIndex(selectedProjectIndex);
+            }
+
+            navigate("/info");
             setIsInfoVisible(true);
             setShouldAnimateInfo(!hasOpenedInfo);
             setShouldPauseInfoAnimation(false);
@@ -102,8 +110,10 @@ function Home() {
 
     const startIndexOpening = () => {
         if (selectedProjectIndex === null) {
-            setPendingProjectIndex(0);
-            navigate(`/${projects[0].slug}`);
+            const projectIndex = lastProjectIndex ?? 0;
+            setPendingProjectIndex(projectIndex);
+            setLastProjectIndex(projectIndex);
+            navigate(`/${projects[projectIndex].slug}`);
             setIsProjectContentVisible(true);
         }
 
@@ -140,7 +150,9 @@ function Home() {
             setIsInfoTransitionPending(false);
             setShouldAnimateInfo(false);
             setShouldPauseInfoAnimation(false);
-            setIsProjectContentVisible(Boolean(selectedProject));
+            if (lastProjectIndex !== null) {
+                showProjectContent(lastProjectIndex);
+            }
             return;
         }
 
@@ -155,7 +167,11 @@ function Home() {
         }
 
         if (isInfoVisible) {
-            fadeOutInfo(() => setIsProjectContentVisible(Boolean(selectedProject)));
+            fadeOutInfo(() => {
+                if (lastProjectIndex !== null) {
+                    showProjectContent(lastProjectIndex);
+                }
+            });
             return;
         }
 
@@ -163,6 +179,7 @@ function Home() {
     };
 
     const showProjectContent = (projectIndex: number) => {
+        setLastProjectIndex(projectIndex);
         navigate(`/${projects[projectIndex].slug}`);
         setPendingProjectIndex(null);
         setIsProjectContentVisible(false);
