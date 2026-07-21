@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 import "./ProjectContent.css";
 import type { Project } from "../data/projects";
 
@@ -6,6 +7,48 @@ type ProjectContentProps = {
   project: Project | null;
   isVisible: boolean;
 };
+
+type LazyVideoProps = {
+  src: string;
+  scrollRoot: RefObject<HTMLElement | null>;
+};
+
+function LazyVideo({ src, scrollRoot }: LazyVideoProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container || shouldLoad) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      {
+        root: scrollRoot.current,
+        // Start downloading upcoming clips well before a visitor reaches them.
+        rootMargin: "800px 0px",
+      },
+    );
+
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, [scrollRoot, shouldLoad]);
+
+  return (
+    <div ref={containerRef} className="project-content-video">
+      {shouldLoad && <video src={src} autoPlay loop muted playsInline preload="auto" />}
+    </div>
+  );
+}
 
 function ProjectContent({ project, isVisible }: ProjectContentProps) {
   const contentRef = useRef<HTMLElement>(null);
@@ -44,14 +87,14 @@ function ProjectContent({ project, isVisible }: ProjectContentProps) {
             if (block.type === "video") {
               return (
                 <figure className={`project-content-media project-content-media-${block.size ?? "wide"}`} key={`${project.id}-video-${blockIndex}`}>
-                  <video src={block.src} autoPlay loop muted playsInline preload="metadata" />
+                  <LazyVideo src={block.src} scrollRoot={contentRef} />
                 </figure>
               );
             }
 
             return (
               <figure className={`project-content-media project-content-media-${block.size ?? "wide"}`} key={`${project.id}-image-${blockIndex}`}>
-                {block.src ? <img src={block.src} alt={block.alt ?? ""} /> : null}
+                {block.src ? <img src={block.src} alt={block.alt ?? ""} loading="lazy" decoding="async" /> : null}
               </figure>
             );
           })}

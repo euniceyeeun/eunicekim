@@ -20,7 +20,7 @@ import experimentsVideo4 from "../assets/experiments/contiguousworlds4.mov";
 import experimentsVideo5 from "../assets/experiments/symposium.mov";
 import experimentsVideo6 from "../assets/experiments/super81.mov";
 import experimentsVideo7 from "../assets/experiments/super82.mov";
-import experimentsVideo8 from "../assets/experiments/super84.mov";
+import experimentsVideo8 from "../assets/experiments/super84.mp4";
 import experimentsVideo9 from "../assets/experiments/pigeons1.mp4";
 import experimentsVideo10 from "../assets/experiments/ball2.mov";
 import epcVideo1 from "../assets/epc/epc1.mp4";
