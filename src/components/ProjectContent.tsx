@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import "./ProjectContent.css";
 import type { Project } from "../data/projects";
 
