@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import "./ProjectContent.css";
 import type { Project } from "../data/projects";
 
@@ -6,7 +7,50 @@ type ProjectContentProps = {
   isVisible: boolean;
 };
 
+type LazyVideoProps = {
+  src: string;
+};
+
+function LazyVideo({ src }: LazyVideoProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container || shouldLoad) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" },
+    );
+
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, [shouldLoad]);
+
+  return (
+    <div ref={containerRef} className="project-content-video">
+      {shouldLoad && <video src={src} autoPlay loop muted playsInline preload="metadata" />}
+    </div>
+  );
+}
+
 function ProjectContent({ project, isVisible }: ProjectContentProps) {
+  const contentRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0 });
+  }, [project?.id]);
+
   const renderTextBlock = (block: Extract<Project["content"][number], { type: "text" }>) => {
     if (!block.link) {
       return block.text;
@@ -26,7 +70,7 @@ function ProjectContent({ project, isVisible }: ProjectContentProps) {
   };
 
   return (
-    <section className={`project-content${isVisible && project ? " is-visible" : ""}`} aria-live="polite">
+    <section ref={contentRef} className={`project-content${isVisible && project ? " is-visible" : ""}`} aria-live="polite">
       {project && (
         <div className="project-content-inner">
           {project.content.map((block, blockIndex) => {
@@ -37,14 +81,14 @@ function ProjectContent({ project, isVisible }: ProjectContentProps) {
             if (block.type === "video") {
               return (
                 <figure className={`project-content-media project-content-media-${block.size ?? "wide"}`} key={`${project.id}-video-${blockIndex}`}>
-                  <video src={block.src} autoPlay loop muted playsInline preload="metadata" />
+                  <LazyVideo src={block.src} />
                 </figure>
               );
             }
 
             return (
               <figure className={`project-content-media project-content-media-${block.size ?? "wide"}`} key={`${project.id}-image-${blockIndex}`}>
-                {block.src ? <img src={block.src} alt={block.alt ?? ""} /> : null}
+                {block.src ? <img src={block.src} alt={block.alt ?? ""} loading="lazy" decoding="async" /> : null}
               </figure>
             );
           })}

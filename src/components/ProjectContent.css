@@ -63,6 +63,12 @@
     align-self:center;
 }
 
+.project-content-video {
+    width:100%;
+    aspect-ratio:16 / 9;
+    background:#FFFFFF;
+}
+
 .project-content-media img,
 .project-content-media video {
     width:100%;

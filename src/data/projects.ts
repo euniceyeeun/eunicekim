@@ -172,7 +172,7 @@ export const projects: Project[] = [
   },
   {
     id: "ptpl",
-    slug: "ptpl",
+    slug: "portalstopastlives",
     label: "portals to past lives",
     indexImageSrc: ptplVideo1,
     content: [
