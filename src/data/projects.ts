@@ -1,5 +1,4 @@
 import loopWithSubtitle from "../assets/loopwsubtitle.mp4";
-import placeholderImage from "../assets/icon.png";
 import tipcImage1 from "../assets/tipc/1.png";
 import tipcVideo1 from "../assets/tipc/1.mov";
 import tipcVideo2 from "../assets/tipc/2.mov";
@@ -15,7 +14,7 @@ import distancesVideo4 from "../assets/distances/6.mp4";
 import distancesVideo5 from "../assets/distances/7.mp4";
 import distancesImage3 from "../assets/distances/8.png";
 import distancesImage4 from "../assets/distances/9.png";
-import experimentsVideo1 from "../assets/experiments/contiguousworlds1.mov";
+// import experimentsVideo1 from "../assets/experiments/contiguousworlds1.mov";
 import experimentsVideo2 from "../assets/experiments/contiguousworlds2.mov";
 import experimentsVideo3 from "../assets/experiments/contiguousworlds3.mov";
 import experimentsVideo4 from "../assets/experiments/contiguousworlds4.mov";
