@@ -15,6 +15,20 @@ import distancesVideo4 from "../assets/distances/6.mp4";
 import distancesVideo5 from "../assets/distances/7.mp4";
 import distancesImage3 from "../assets/distances/8.png";
 import distancesImage4 from "../assets/distances/9.png";
+import experimentsVideo1 from "../assets/experiments/contiguousworlds1.mov";
+import experimentsVideo2 from "../assets/experiments/contiguousworlds2.mov";
+import experimentsVideo3 from "../assets/experiments/contiguousworlds3.mov";
+import experimentsVideo4 from "../assets/experiments/contiguousworlds4.mov";
+import experimentsVideo5 from "../assets/experiments/symposium.mov";
+import experimentsVideo6 from "../assets/experiments/super81.mp4";
+import experimentsVideo7 from "../assets/experiments/super82.mp4";
+import experimentsVideo8 from "../assets/experiments/super83.mp4";
+import experimentsVideo9 from "../assets/experiments/pigeons1.mp4";
+import experimentsVideo10 from "../assets/experiments/ball2.mp4";
+import epcVideo1 from "../assets/epc/epc1.mp4";
+import epcVideo2 from "../assets/epc/epc2.mp4";
+import epcVideo3 from "../assets/epc/epc3.mp4";
+import epcVideo4 from "../assets/epc/epc4.mp4";
 
 export type ProjectContentBlock =
   | {
@@ -56,9 +70,9 @@ export const projects: Project[] = [
     content: [
       {
         type: "text",
-        text: `Texts In Perennial Circulation is an NYC-based, friends-owned library.
-        I designed & coded this site to facilitate in-person book-borrowing, one of those
-        special human exchanges which I hope never become obsolete. This site was crafted
+        text: `Texts In Perennial Circulation is an NYC-based, friends-owned library project.
+        This is a site I designed & coded to facilitate in-person book-borrowing, one of those
+        special human exchanges which I hope don't become obsolete. This site was crafted
         using HTML/CSS/React, and MongoDB. Find the live site here.`,
         link: {
           text: "Find the live site here.",
@@ -84,10 +98,10 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "project-03",
+    id: "distances",
     slug: "distances",
     label: "distances",
-    indexImageSrc: placeholderImage,
+    indexImageSrc: distancesVideo1,
     content: [
       {
         type: "text",
@@ -103,8 +117,12 @@ export const projects: Project[] = [
       },
       {
         type: "text",
-        text: `currently not live because i don't have the budget
-        for google's geolocation API if many people were to use this site.`,
+        text: `i used Google's Geolocation API & Reverse Geocoding API along with  OpenWeather's Weather API for data, and used p5.js for
+        the animation components. this project was entirely hand-coded using HTML/CSS/Javascript.`,
+      },
+      {
+        type: "text",
+        text: `currently not live (until i have budget for google's geolocation API + large traffic).`,
       },
         
       {
@@ -155,10 +173,10 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "project-04",
+    id: "ptpl",
     slug: "ptpl",
     label: "portals to past lives",
-    indexImageSrc: placeholderImage,
+    indexImageSrc: ptplVideo1,
     content: [
       {
         type: "text",
@@ -181,6 +199,97 @@ export const projects: Project[] = [
       {
         type: "video",
         src: ptplVideo3,
+        size: "wide",
+      },
+    ],
+  },
+  {
+    id: "epc",
+    slug: "everypagecreases",
+    label: "Every Page Creases",
+    content: [
+      {
+        type: "text",
+        text: "A meditation on the losses, ailments, and pasts that define us; of pages which crease and memories which crumple. (An experimental animation). The film can be viewed here.",
+        link: {
+          text: "The film can be viewed here.",
+          href: "https://vimeo.com/825662916",
+        },
+      },
+      {
+        type: "video",
+        src: epcVideo1,
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: epcVideo2,
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: epcVideo3,
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: epcVideo4,
+        size: "wide",
+      },
+    ],
+  },
+  {
+    id: "experiments",
+    slug: "experiments",
+    label: "Experiments",
+    content: [
+      {
+        type: "text",
+        text: "other things i've made, both digital & analog...",
+      },
+      {
+        type: "video",
+        src: experimentsVideo2,
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: experimentsVideo3,
+        size: "half",
+      },
+      {
+        type: "video",
+        src: experimentsVideo4,
+        size: "half",
+      },
+      {
+        type: "video",
+        src: experimentsVideo5,
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: experimentsVideo6,
+        size: "half",
+      },
+      {
+        type: "video",
+        src: experimentsVideo7,
+        size: "half",
+      },
+      {
+        type: "video",
+        src: experimentsVideo9,
+        size: "half",
+      },
+      {
+        type: "video",
+        src: experimentsVideo10,
+        size: "half",
+      },
+      {
+        type: "video",
+        src: experimentsVideo8,
         size: "wide",
       },
     ],

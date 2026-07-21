@@ -134,7 +134,13 @@
     pointer-events:auto;
 }
 
-.project-index-list .is-active {
+.nav-bar.is-index-mask-open.is-info-active .nav-layer-base .project-index-list {
+    opacity:0;
+    pointer-events:none;
+}
+
+.project-index-list .is-active,
+.nav-item.is-active {
     font-weight:700;
 }
 
@@ -161,9 +167,54 @@
     transition:color 0.2s ease;
 }
 
+.project-index-list button:disabled {
+    cursor:default;
+}
+
 .project-index-list li:not(.is-active) button:hover,
 .project-index-list li:not(.is-active) button:focus-visible {
     color:#8A8A8A;
+}
+
+@media (max-width: 767px) {
+    .nav-layer,
+    .nav-layer-mask-content {
+        width:calc(100dvw - 60px);
+        margin-left:30px;
+        display:block;
+    }
+
+    .nav-layer-mask-content {
+        left:0;
+    }
+
+    .nav-layer > *:nth-child(1),
+    .nav-layer-mask-content > *:nth-child(1) {
+        position:absolute;
+        top:30px;
+        left:0;
+    }
+
+    .nav-layer > *:nth-child(2),
+    .nav-layer-mask-content > *:nth-child(2) {
+        position:absolute;
+        top:30px;
+        left:50%;
+        justify-self:auto;
+        transform:translateX(-50%);
+    }
+
+    .nav-layer > *:nth-child(3),
+    .nav-layer-mask-content > *:nth-child(3) {
+        position:absolute;
+        top:30px;
+        right:0;
+        left:auto;
+    }
+
+    .project-index-list {
+        top:50px;
+    }
 }
 
 @keyframes shrink-nav-mask {

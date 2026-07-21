@@ -17,6 +17,7 @@ function Home() {
     const routeProjectIndex = projectSlug ? projects.findIndex((project) => project.slug === projectSlug) : -1;
     const selectedProjectIndex = routeProjectIndex === -1 ? null : routeProjectIndex;
     const selectedProject = selectedProjectIndex === null ? null : projects[selectedProjectIndex];
+    const [pendingProjectIndex, setPendingProjectIndex] = useState<number | null>(null);
     const [isInfoVisible, setIsInfoVisible] = useState(false);
     const [hasOpenedInfo, setHasOpenedInfo] = useState(false);
     const [shouldAnimateInfo, setShouldAnimateInfo] = useState(false);
@@ -101,6 +102,7 @@ function Home() {
 
     const startIndexOpening = () => {
         if (selectedProjectIndex === null) {
+            setPendingProjectIndex(0);
             navigate(`/${projects[0].slug}`);
             setIsProjectContentVisible(true);
         }
@@ -129,6 +131,19 @@ function Home() {
             return;
         }
 
+        if (isInfoTransitionPending) {
+            if (indexTransitionTimeoutRef.current !== null) {
+                window.clearTimeout(indexTransitionTimeoutRef.current);
+                indexTransitionTimeoutRef.current = null;
+            }
+
+            setIsInfoTransitionPending(false);
+            setShouldAnimateInfo(false);
+            setShouldPauseInfoAnimation(false);
+            setIsProjectContentVisible(Boolean(selectedProject));
+            return;
+        }
+
         if (indexMaskState === "idle" || indexMaskState === "closing") {
             if (isInfoVisible) {
                 fadeOutInfoBeforeIndexTransition(startIndexOpening);
@@ -140,7 +155,7 @@ function Home() {
         }
 
         if (isInfoVisible) {
-            fadeOutInfoBeforeIndexTransition(startIndexClosing);
+            fadeOutInfo(() => setIsProjectContentVisible(Boolean(selectedProject)));
             return;
         }
 
@@ -149,6 +164,7 @@ function Home() {
 
     const showProjectContent = (projectIndex: number) => {
         navigate(`/${projects[projectIndex].slug}`);
+        setPendingProjectIndex(null);
         setIsProjectContentVisible(false);
 
         window.requestAnimationFrame(() => {
@@ -160,6 +176,10 @@ function Home() {
         if (isProjectTransitionPending) {
             return;
         }
+
+        // Update the index immediately so the outgoing project's label never
+        // becomes active while Info fades away.
+        setPendingProjectIndex(projectIndex);
 
         if (isInfoVisible) {
             setIsProjectContentVisible(false);
@@ -202,7 +222,8 @@ function Home() {
             indexMaskState={indexMaskState}
             indexMaskKey={indexMaskKey}
             projects={projects}
-            selectedProjectIndex={selectedProjectIndex}
+            selectedProjectIndex={pendingProjectIndex ?? selectedProjectIndex}
+            isInfoActive={isInfoVisible || isInfoTransitionPending}
             onSelectProject={selectProject}
             onIndexClick={toggleIndex}
             isInfoDisabled={isInfoRevealInProgress || isInfoTransitionPending}

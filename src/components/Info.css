@@ -49,6 +49,17 @@
     animation-play-state:paused;
 }
 
+@media (max-width: 767px) {
+    #info-container {
+        top:80px;
+    }
+
+    .info-content {
+        width:calc(100dvw - 60px);
+        margin-left:30px;
+    }
+}
+
 @keyframes reveal-character {
     to {
         opacity:1;
