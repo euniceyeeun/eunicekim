@@ -1,4 +1,4 @@
-import loopWithSubtitle from "../assets/loopwsubtitle.mov";
+import loopWithSubtitle from "../assets/loopwsubtitle.mp4";
 import tipcImage1 from "../assets/tipc/1.png";
 import tipcVideo1 from "../assets/tipc/1.mov";
 import tipcVideo2 from "../assets/tipc/2.mov";
