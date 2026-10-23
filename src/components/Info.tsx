@@ -3,7 +3,8 @@ import "./Info.css";
 const infoParagraphs = [
   "I am an interdisciplinary designer who enjoys experimenting with video, code, and other digital and tactile mediums. I'm particularly interested in exploring the presence of empathy & the human condition in our virtual experiences and interactions.",
   "This site is a collection of some of my creative studies and impulses.",
-  "Other than making things, I like climbing rocks, sitting in the sun & learning foreign languages."
+  "Other than making things, I like climbing rocks, sitting in the sun & learning foreign languages.",
+  "You can contact me at yeeun02@gmail.com."
 ];
 
 type InfoProps = {

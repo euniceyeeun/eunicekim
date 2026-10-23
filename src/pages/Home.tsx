@@ -105,7 +105,7 @@ function Home() {
             return;
         }
 
-        fadeOutInfo();
+        fadeOutInfo(() => navigate("/"));
     };
 
     const startIndexOpening = () => {
@@ -134,6 +134,30 @@ function Home() {
             startTransition();
             setIsIndexTransitionPending(false);
         });
+    };
+
+    const returnHome = () => {
+        if (isIndexTransitionPending) {
+            return;
+        }
+
+        if (isInfoTransitionPending) {
+            if (indexTransitionTimeoutRef.current !== null) {
+                window.clearTimeout(indexTransitionTimeoutRef.current);
+                indexTransitionTimeoutRef.current = null;
+            }
+
+            setIsInfoTransitionPending(false);
+            setShouldAnimateInfo(false);
+            setShouldPauseInfoAnimation(false);
+        }
+
+        if (isInfoVisible) {
+            fadeOutInfoBeforeIndexTransition(startIndexClosing);
+            return;
+        }
+
+        startIndexClosing();
     };
 
     const toggleIndex = () => {
@@ -242,6 +266,7 @@ function Home() {
             selectedProjectIndex={pendingProjectIndex ?? selectedProjectIndex}
             isInfoActive={isInfoVisible || isInfoTransitionPending}
             onSelectProject={selectProject}
+            onHomeClick={returnHome}
             onIndexClick={toggleIndex}
             isInfoDisabled={isInfoRevealInProgress || isInfoTransitionPending}
             onInfoClick={toggleInfo}

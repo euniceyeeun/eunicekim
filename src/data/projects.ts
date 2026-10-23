@@ -119,11 +119,6 @@ export const projects: Project[] = [
         the animation components. this project was entirely hand-coded using HTML/CSS/Javascript.`,
       },
       {
-        type: "text",
-        text: `currently not live (until i have budget for google's geolocation API + large traffic).`,
-      },
-        
-      {
         type: "video",
         src: distancesVideo1,
         size: "wide",

@@ -11,6 +11,7 @@ type NavProps = {
   selectedProjectIndex: number | null;
   isInfoActive: boolean;
   onSelectProject: (projectIndex: number) => void;
+  onHomeClick: () => void;
   onIndexClick: () => void;
   isInfoDisabled: boolean;
   onInfoClick: () => void;
@@ -24,14 +25,16 @@ function Nav({
   selectedProjectIndex,
   isInfoActive,
   onSelectProject,
+  onHomeClick,
   onIndexClick,
   isInfoDisabled,
   onInfoClick,
 }: NavProps) {
   const isIndexOpen = indexMaskState === "open";
+  const isInfoButtonDisabled = isInfoDisabled || (isInfoActive && isIndexOpen);
 
   const renderHomeButton = () => (
-    <button className="nav-item nav-button" type="button" disabled={!isIndexOpen} onClick={onIndexClick}>
+    <button className="nav-item nav-button" type="button" disabled={!isIndexOpen} onClick={onHomeClick}>
       Eunice Yeeun Kim
     </button>
   );
@@ -56,14 +59,14 @@ function Nav({
         <div className="nav-layer nav-layer-base">
           {renderHomeButton()}
           {renderIndexGroup()}
-          <button className={`nav-item nav-button${isInfoActive ? " is-active" : ""}`} type="button" disabled={isInfoDisabled || isInfoActive} onClick={onInfoClick}>Info</button>
+          <button className={`nav-item nav-button${isInfoActive ? " is-active" : ""}`} type="button" disabled={isInfoButtonDisabled} onClick={onInfoClick}>Info</button>
         </div>
         {isIndexMaskVisible && (
           <div className={`nav-layer-mask is-index-mask-${indexMaskState}`} key={`nav-mask-${indexMaskKey}`} aria-hidden="true">
             <div className="nav-layer-mask-content">
               {renderHomeButton()}
               {renderIndexGroup()}
-              <button className={`nav-item nav-button${isInfoActive ? " is-active" : ""}`} type="button" disabled={isInfoDisabled || isInfoActive} onClick={onInfoClick}>Info</button>
+              <button className={`nav-item nav-button${isInfoActive ? " is-active" : ""}`} type="button" disabled={isInfoButtonDisabled} onClick={onInfoClick}>Info</button>
             </div>
           </div>
         )}
