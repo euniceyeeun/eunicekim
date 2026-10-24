@@ -27,6 +27,8 @@ import epcVideo1 from "../assets/epc/epc1.mp4";
 import epcVideo2 from "../assets/epc/epc2.mp4";
 import epcVideo3 from "../assets/epc/epc3.mp4";
 import epcVideo4 from "../assets/epc/epc4.mp4";
+import nvecImage1 from "../assets/nvec/nvec1.png";
+import nvecImage2 from "../assets/nvec/nvec2.png";
 
 export type ProjectContentBlock =
   | {
@@ -61,41 +63,6 @@ export const homeBackgroundVideoSrc = loopWithSubtitle;
 
 export const projects: Project[] = [
   {
-    id: "tipc",
-    slug: "tipc",
-    label: "Texts In Perennial Circulation",
-    indexImageSrc: tipcImage1,
-    content: [
-      {
-        type: "text",
-        text: `Texts In Perennial Circulation is an NYC-based, friends-owned library project.
-        This is a site I designed & coded to facilitate in-person book-borrowing, one of those
-        special human exchanges which I hope don't become obsolete. This site was crafted
-        using HTML/CSS/React, and MongoDB. Find the live site here.`,
-        link: {
-          text: "Find the live site here.",
-          href: "https://www.tipc-library.org/",
-        },
-      },
-      {
-        type: "image",
-        src: tipcImage1,
-        alt: "Texts In Perennial Circulation",
-        size: "wide",
-      },
-      {
-        type: "video",
-        src: tipcVideo1,
-        size: "wide",
-      },
-      {
-        type: "video",
-        src: tipcVideo2,
-        size: "wide",
-      }
-    ],
-  },
-  {
     id: "distances",
     slug: "distances",
     label: "distances",
@@ -103,7 +70,7 @@ export const projects: Project[] = [
     content: [
       {
         type: "text",
-        text: `distances is a weather app for humans who don't share space.`
+        text: `*distances* is a weather app for humans who don't share space.`
       },
       {
         type: "text",
@@ -173,7 +140,7 @@ export const projects: Project[] = [
     content: [
       {
         type: "text",
-        text: "portals to past lives is  is an ongoing collection of moments lived and recorded. It is an exploration of the way digital documentation allows access to our former selves and sentiments in the form of limited glimpses, familiar sounds, and floating memories. find the live project here.",
+        text: "*portals to past lives* is  is an ongoing collection of moments lived and recorded. It is an exploration of the way digital documentation allows access to our former selves and sentiments in the form of limited glimpses, familiar sounds, and floating memories. find the live project here.",
         link: {
           text: "find the live project here.",
           href: "https://euniceyeeun.github.io/portalstopastlives/",
@@ -192,6 +159,62 @@ export const projects: Project[] = [
       {
         type: "video",
         src: ptplVideo3,
+        size: "wide",
+      },
+    ],
+  },
+  {
+    id: "tipc",
+    slug: "tipc",
+    label: "Texts In Perennial Circulation",
+    indexImageSrc: tipcImage1,
+    content: [
+      {
+        type: "text",
+        text: `*Texts In Perennial Circulation* is an NYC-based, friends-owned library project.
+        This is a site I designed & coded to facilitate in-person book-borrowing, one of those
+        special human exchanges which I hope don't become obsolete. This site was crafted
+        using HTML/CSS/React, and MongoDB. Find the live site here.`,
+        link: {
+          text: "Find the live site here.",
+          href: "https://www.tipc-library.org/",
+        },
+      },
+      {
+        type: "image",
+        src: tipcImage1,
+        alt: "Texts In Perennial Circulation",
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: tipcVideo1,
+        size: "wide",
+      },
+      {
+        type: "video",
+        src: tipcVideo2,
+        size: "wide",
+      }
+    ],
+  },
+  {
+    id: "nos-vemos-en-colombia",
+    slug: "nosvemosencolombia",
+    label: "Nos vemos en Colombia",
+    content: [
+      {
+        type: "text",
+        text: `*Nos vemos en Colombia* is an image-based publication documenting my reunion with a long-distance friend during the 2026 Colombia earthquake.`,
+      },
+      {
+        type: "image",
+        src: nvecImage1,
+        size: "wide",
+      },
+      {
+        type: "image",
+        src: nvecImage2,
         size: "wide",
       },
     ],

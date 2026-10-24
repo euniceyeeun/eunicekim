@@ -58,21 +58,32 @@ function ProjectContent({ project, isVisible }: ProjectContentProps) {
   }, [project?.id]);
 
   const renderTextBlock = (block: Extract<Project["content"][number], { type: "text" }>) => {
-    if (!block.link) {
-      return block.text;
-    }
+    const renderSegment = (text: string, keyPrefix: string) => {
+      if (!block.link || !text.includes(block.link.text)) {
+        return text;
+      }
 
-    const [beforeLink, afterLink] = block.text.split(block.link.text);
+      const [beforeLink, afterLink] = text.split(block.link.text);
 
-    return (
-      <>
-        {beforeLink}
-        <a href={block.link.href} target="_blank" rel="noreferrer">
-          {block.link.text}
-        </a>
-        {afterLink}
-      </>
-    );
+      return (
+        <span key={keyPrefix}>
+          {beforeLink}
+          <a href={block.link.href} target="_blank" rel="noreferrer">
+            {block.link.text}
+          </a>
+          {afterLink}
+        </span>
+      );
+    };
+
+    return block.text.split(/(\*[^*]+\*)/g).map((segment, index) => {
+      const key = `${block.text}-${index}`;
+      if (segment.startsWith("*") && segment.endsWith("*")) {
+        return <em key={key}>{renderSegment(segment.slice(1, -1), key)}</em>;
+      }
+
+      return renderSegment(segment, key);
+    });
   };
 
   return (
